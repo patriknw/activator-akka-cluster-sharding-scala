@@ -7,7 +7,7 @@ import akka.actor.ActorPath
 import akka.actor.ActorSystem
 import akka.actor.Identify
 import akka.actor.Props
-import akka.cluster.sharding.{ClusterShardingSettings, ClusterSharding}
+import akka.cluster.sharding.{ ClusterShardingSettings, ClusterSharding }
 import akka.pattern.ask
 import akka.persistence.journal.leveldb.SharedLeveldbJournal
 import akka.persistence.journal.leveldb.SharedLeveldbStore
@@ -30,8 +30,8 @@ object BlogApp {
       // Create an Akka system
       val system = ActorSystem("ClusterSystem", config)
 
-      startupSharedJournal(system, startStore = (port == "2551"), path =
-        ActorPath.fromString("akka.tcp://ClusterSystem@127.0.0.1:2551/user/store"))
+      //      startupSharedJournal(system, startStore = (port == "2551"), path =
+      //        ActorPath.fromString("akka.tcp://ClusterSystem@127.0.0.1:2551/user/store"))
 
       val authorListingRegion = ClusterSharding(system).start(
         typeName = AuthorListing.shardName,
@@ -42,7 +42,7 @@ object BlogApp {
       ClusterSharding(system).start(
         typeName = Post.shardName,
         entityProps = Post.props(authorListingRegion),
-        settings = ClusterShardingSettings(system),
+        settings = ClusterShardingSettings(system).withRememberEntities(true),
         extractEntityId = Post.idExtractor,
         extractShardId = Post.shardResolver)
 
